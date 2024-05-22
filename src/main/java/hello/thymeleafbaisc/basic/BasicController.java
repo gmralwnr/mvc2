@@ -1,11 +1,17 @@
 package hello.thymeleafbaisc.basic;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +55,27 @@ public class BasicController {
 
         return "basic/variable";
     }
+    @GetMapping("/basic-objects")
+    public String basicObject(Model model , HttpServletRequest request, HttpServletResponse response, HttpSession session){
+        //session :  로그인 같은 경우 사용자가 웹브라우저 나가지 않는 이상 계속 유지 되어있는것
+        session.setAttribute("sessionData", "hello Session");
+        model.addAttribute("request" ,request);
+        model.addAttribute("response",response);
+        model.addAttribute("servletContext", request.getServletContext());
+
+        return "basic/basic-objects";
+    }
+    //빈생성
+    @Component("helloBean")
+    static class HelloBean {
+            public String hello(String data){
+                return "Hello " + data;
+            }
+    }
+
 
     @Data
-    static class User{
+     static class User{
         private String username;
         private int age;
 
@@ -62,7 +86,21 @@ public class BasicController {
          }
 
 
-
     }
+
+    @GetMapping("/date")
+    public String date(Model model){
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        return "basic/date";
+    }
+
+    @GetMapping("/link")
+    public String link(Model model){
+        model.addAttribute("param1", "data1");
+        model.addAttribute("param2", "data2");
+        return "basic/link";
+    }
+
+
 
 }
